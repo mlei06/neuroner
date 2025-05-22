@@ -11,16 +11,16 @@ def modify_labels(input_dir, output_dir):
         os.makedirs(os.path.join(output_dir, split), exist_ok=True)
 
     label_mappings = {
-        'NAME': 'NAME',
-        'LOCATION': 'LOCATION',
-        'CITY': 'CITY',
-        'STATE': 'STATE',
-        'ID': 'ID',
-        'ORGANIZATION': 'ORGANIZATION',
-        'PROFESSION': 'PROFESSION',
+        'NAME': 'PATIENT',
+        'LOCATION': 'LOCATION_OTHER',
+        'CITY': 'LOCATION_OTHER',
+        'STATE': 'LOCATION_OTHER',
+        'ID': 'IDNUM',
+        'ORGANIZATION': 'HOSPITAL',
+        'PROFESSION': 'DOCTOR',
         'DATE': 'DATE',
         'AGE': 'AGE',
-        'COUNTRY': 'COUNTRY',
+        'COUNTRY': 'LOCATION_OTHER',
         'HOSPITAL': 'HOSPITAL',
         'PHONE': 'PHONE'
     }
@@ -72,19 +72,7 @@ if __name__ == "__main__":
     modify_labels(args.input, args.output)
 
     # Final report
-    print("\n✅ Label modifications completed!")
+    print("\nLabel modifications completed!")
     print(f"Original dataset: {args.input}")
     print(f"Modified dataset: {args.output}")
-    print("\nLabel mappings applied:")
-    print("  NAME         → NAME")
-    print("  LOCATION     → LOCATION")
-    print("  CITY         → CITY")
-    print("  STATE        → STATE")
-    print("  ID           → ID")
-    print("  ORGANIZATION → ORGANIZATION")
-    print("  PROFESSION   → PROFESSION")
-    print("  DATE         → DATE")
-    print("  AGE          → AGE")
-    print("  COUNTRY      → COUNTRY")
-    print("  HOSPITAL     → HOSPITAL")
-    print("  PHONE        → PHONE")
+    

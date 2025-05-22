@@ -114,8 +114,8 @@ pip install -r requirements.txt
 
 #download and unzip embeddings
 mkdir -p data/word_vectors
-wget http://nlp.stanford.edu/data/glove.840B.300d.zip
-unzip glove.840B.300d.zip -d data/word_vectors
+wget -P data/word_vectors http://neuroner.com/data/word_vectors/glove.6B.100d.zip
+unzip data/word_vectors/glove.6B.100d.zip -d data/word_vectors/
 
 #download spacy en model
 python -m spacy download en
@@ -134,23 +134,23 @@ neuroner --fetch_trained_model=mimic_glove_stanford_bioes
 2. Create/import datasets
 NeuroNER requires datasets to be in BRAT format, structured into train/, valid/, and test/ folders, with matching .txt and .ann files.
 To create a BRAT-formatted dataset from:
-    The PhysioNet raw notes (orig.txt)
-    The Kaggle-provided annotation CSV (train.csv):
+    The PhysioNet raw notes (orig.txt) not provided
+    The Kaggle-provided annotation CSV (ann.csv) This is provided already
 Use the following script:
  
 ```
 python scripts/process_dataset.py \
-  --text path/to/orig.txt \
-  --annotations path/to/train.csv \
-  --output split_output \
+  --text data/rawdataset/<nameoftxtfile>.txt \
+  --annotations data/rawdataset/ann.csv \
+  --output data/<name of folder you want> \
   --mappings
 
 ```
 Arguments:
 
---text: path to the raw note file from PhysioNet.
+--text: path to the raw note file from PhysioNet. This is not provided
 
---annotations: path to the Kaggle CSV file.
+--annotations: path to the Kaggle CSV file. This is provided
 
 --output: target output directory (e.g., split_output)
 
@@ -176,16 +176,17 @@ You can find the expected labels by inspecting dataset/ inside the model folder.
 ```
 neuroner --train_model=False \
          --use_pretrained_model=True \
-         --dataset_text_folder= <dataset name>\
+         --dataset_text_folder= data/<dataset name>\
          --pretrained_model_folder=trained_models/<model name> \
          --main_evaluation_mode=token
 
 ```
 Make sure labels of dataset matches model, if not map the labels with the below command after modifying diciontary
+input directory must have train val and test folders
 ```
 python scripts/modify_labels.py \
-  --input split_output_original \
-  --output split_output_modified
+  --input data/<original dataset split directory> \
+  --output data/<output directory>
 ```
 
 To see what the model actually predicted for each token look at the txt files in the output folder
@@ -194,7 +195,7 @@ To see what the model actually predicted for each token look at the txt files in
 ```
 neuroner --train_model=True \
          --use_pretrained_model=True \
-         --dataset_text_folder=<dataset name> \
+         --dataset_text_folder=data/<dataset name> \
          --pretrained_model_folder=trained_models/<model name>
 
 ```
@@ -213,7 +214,7 @@ To increase maximum epochs allowed without improvement add a --patience=<numbero
 ```
 neuroner --train_model=True \
          --use_pretrained_model=False \
-         --dataset_text_folder=split_output \
+         --dataset_text_folder=data/<dataset name> \
          
 ```
 To increase maximum epochs allowed without improvement add a --patience=<numberofepochs> arguement, default is set to 10
@@ -224,7 +225,18 @@ epoch you want and move these all into a folder and put them in the trained_mode
 Make sure to rename the parameters file to parameters.ini and remove the epoch numbers. it should look like below
 https://drive.google.com/file/d/1vRS6wXauP6Qv8Vfhu_tSiMIbqY6KwZzU/view?usp=sharing
 
+6. Analyze Model Output for particular label
+   
+   To see the true positives, false positives, and false negatives and recall,prec for a particular label
+```
+python scripts/AnalyzeLabel.py   
+--file output/<name of output folder>/<name of txt file>   
+--label <label>
 
+```
+look inside output folder and find the folder for the evaluation
+name of txt file should either be 000_test.txt or 000_train.txt depending on what set you want to analyze
+if you pass label as PATIENT, it will count both PATIENT and DOCTOR as true positives
 
 
 
